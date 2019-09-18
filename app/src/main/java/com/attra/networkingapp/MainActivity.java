@@ -14,8 +14,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.attra.networkingapp.Models.SampleModel;
 import com.attra.networkingapp.Services.MyIntentService;
 import com.attra.networkingapp.utils.NetworkHelper;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,12 +28,25 @@ public class MainActivity extends AppCompatActivity {
     private boolean isNetworkAvailable;
     private ProgressDialog progressDialog;
     private static final String JSON_URL="https://jsonplaceholder.typicode.com/posts/1";
+    private SampleModel sampleModel=null;
     private BroadcastReceiver receiver=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
 
-            logMsg(intent.getStringExtra(MyIntentService.MSG_KEY));
+                String data=intent.getStringExtra(MyIntentService.MSG_KEY);
+
+                // Return a json object from String data source
+                //JSONObject response=new JSONObject(data);
+
+                Gson gson=new Gson();
+                sampleModel=  gson.fromJson(data,SampleModel.class);
+
+                // If you want to parse data into SampleModel array, then you have to do
+                //SampleModel[] sampleModel=gson.fromJson(data,SampleModel[].class);
+
+
+            logMsg(data);
             progressDialog.hide();
         }
     };
@@ -81,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
     private void logMsg(String data) {
 
         serviceMsg.setText(data);
+        if(sampleModel!=null){
+            serviceMsg.setText(sampleModel.body);
+        }
         Log.d("Aryan", "logMsg: "+data);
     }
 }
