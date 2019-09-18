@@ -2,9 +2,14 @@ package com.attra.networkingapp.Services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.attra.networkingapp.utils.ConnectionHelper;
+
+import java.io.IOException;
 
 
 @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
@@ -21,8 +26,17 @@ public class MyIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        Uri data=intent.getData();
+        String response;
 
-        sendMessageToUi("Dummy Data");
+        try {
+            response= ConnectionHelper.downloadUrl(data.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            response=e.getMessage();
+        }
+
+        sendMessageToUi(response);
 
     }
 
